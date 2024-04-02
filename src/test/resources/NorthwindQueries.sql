@@ -178,18 +178,81 @@
 
 -----------------------------------------------------------
 -- 13.Which of our personnel make more than 75 sales ?
+    SELECT EMPLOYEEID,COUNT(*)
+    FROM ORDERS
+    GROUP BY EMPLOYEEID
+    HAVING COUNT(*)>75;
+
+    -- GET ME EMPLOYEE FIRSTNAME,LASTNAME
+    SELECT E.EMPLOYEEID,FIRSTNAME,LASTNAME,COUNT(*)
+    FROM ORDERS O INNER JOIN EMPLOYEES E
+            ON O.EMPLOYEEID=E.EMPLOYEEID
+    GROUP BY E.EMPLOYEEID,FIRSTNAME,LASTNAME
+    HAVING COUNT(*)>75;
+
+    -- CAN WE DO THIS WITH SUBQUERY (NO JOIN )
+    -- This query gets always employeeid who has more than 75 sales
+        SELECT EMPLOYEEID
+        FROM ORDERS
+        GROUP BY EMPLOYEEID
+        HAVING COUNT(*)>75;
+
+        SELECT FIRSTNAME,LASTNAME
+        FROM EMPLOYEES
+        WHERE EMPLOYEEID IN (1,2,3,4,8);
+
+        -- SOLUTION
+        SELECT FIRSTNAME,LASTNAME
+        FROM EMPLOYEES
+        WHERE EMPLOYEEID IN (SELECT EMPLOYEEID
+                             FROM ORDERS
+                             GROUP BY EMPLOYEEID
+                             HAVING COUNT(*)>75);
+
 
 -- 14.Get me product id and the total quantities ordered for each product
 -- in the Order Details table.
+-- IF THE NAME OF THE TABLE HAS SPACE WE CAN USE
+    -- "ORDER DETAILS"
+    -- [ORDER DETAILS]
+
+    SELECT PRODUCTID,SUM(QUANTITY)
+    FROM [ORDER DETAILS]
+    GROUP BY PRODUCTID;
+
+    SELECT * FROM [ORDER DETAILS];
+
+    -- FILTER RESULT TO SEE ONLY PRODUCT WHICH IS SOLD MORE THAN 1000
+
+    -- SORT DATA IN DESC BASED ON PRODUCT COUNT
 
 
 -- 15. --Select a list of customer names who have no orders in the Orders table.
+    -- JOIN
+    SELECT O.CUSTOMERID,C.CUSTOMERID,CONTACTNAME
+      FROM ORDERS O RIGHT JOIN  CUSTOMERS C
+            ON O.CUSTOMERID=C.CUSTOMERID
+      WHERE O.CUSTOMERID IS NULL;
+
+    -- SUBQUERY
+        SELECT DISTINCT CUSTOMERID FROM ORDERS; -- 89
+        SELECT CUSTOMERID FROM CUSTOMERS;  -- 93
+
+        SELECT CONTACTNAME
+        FROM CUSTOMERS
+        WHERE CUSTOMERID NOT IN (SELECT DISTINCT CUSTOMERID FROM ORDERS)
+
+    -- EXCEPT( SQLLITE - MYSQL ) = MINUS ( ORACLE )
+    -- MINUS Q1-Q2 "Cydeo-SQL" - "Cydeo" = "SQL"
+        SELECT CUSTOMERID FROM CUSTOMERS
+        EXCEPT
+        SELECT DISTINCT CUSTOMERID FROM ORDERS;
+
 
 -- 16. --Select a list of customer names who have orders in the Orders table.
 
 
 -- JOIN
-
 -- 1.How many product we have in each category
 
 -- 2.Get me categoryID that has highest products number ?

@@ -250,29 +250,156 @@
 
 
 -- 16. --Select a list of customer names who have orders in the Orders table.
+    -- JOIN
+    SELECT DISTINCT O.CUSTOMERID,C.CUSTOMERID,CONTACTNAME
+    FROM ORDERS O INNER JOIN  CUSTOMERS C
+    ON O.CUSTOMERID=C.CUSTOMERID;
+
+    -- SUBQUERY
+    SELECT DISTINCT CUSTOMERID FROM ORDERS; -- 89
+    SELECT CUSTOMERID FROM CUSTOMERS;  -- 93
+
+    SELECT CONTACTNAME
+    FROM CUSTOMERS
+    WHERE CUSTOMERID IN (SELECT DISTINCT CUSTOMERID FROM ORDERS);
+
+    -- SET OPS
+    --
+    -- INTERSECT Q1-Q2 "Cydeo,SQL,JDBC" - "Cydeo,API" = "Cydeo"
+    SELECT CUSTOMERID FROM CUSTOMERS
+    INTERSECT
+    SELECT DISTINCT CUSTOMERID FROM ORDERS;
 
 
 -- JOIN
+    -- INNER JOIN   (INNER JOIN == JOIN)
+    -- OUTER JOIN   (1-LEFT 2-RIGHT 3-FULL )
+      --   LEFT JOIN == LEFT OUTER JOIN
+    -- SELF JOIN --> Joining table with itself
+
 -- 1.How many product we have in each category
+        SELECT CATEGORYID,COUNT(*)
+        FROM PRODUCTS
+        GROUP BY CATEGORYID;
 
 -- 2.Get me categoryID that has highest products number ?
+        SELECT CATEGORYID,COUNT(*) AS PRODUCT_COUNT
+        FROM PRODUCTS
+        GROUP BY CATEGORYID
+        ORDER BY PRODUCT_COUNT DESC
+        LIMIT 1;
 
 -- 3.What is the name of category
 
+        -- JOIN
+        SELECT CATEGORYNAME,COUNT(*) AS PRODUCT_COUNT
+        FROM PRODUCTS P INNER JOIN CATEGORIES C
+                    ON P.CATEGORYID=C.CATEGORYID
+        GROUP BY CATEGORYNAME
+        ORDER BY PRODUCT_COUNT DESC
+        LIMIT 1;
+
+        -- SUBQUERY
+        SELECT CATEGORYNAME FROM CATEGORIES
+        WHERE CATEGORYID=(SELECT CATEGORYID
+                          FROM PRODUCTS
+                          GROUP BY CATEGORYID
+                          ORDER BY COUNT(*) DESC
+                          LIMIT 1);
+
+-- Extras -> Display all products where category name is "SeeFood"
+        SELECT * FROM PRODUCTS
+        WHERE CategoryID=(SELECT CATEGORYID FROM CATEGORIES
+                          WHERE CATEGORYNAME='Seafood');
+
+        SELECT CATEGORYID FROM CATEGORIES
+        WHERE CATEGORYNAME='Seafood';
+
+
+-- Extras -> Display ORDERID which we used Shipper Company as Speedy Express
+
+        SELECT SHIPPERID FROM SHIPPERS
+        WHERE COMPANYNAME='Speedy Express';
+
+        SELECT * FROM ORDERS
+        WHERE SHIPVIA=(SELECT SHIPPERID FROM SHIPPERS
+                       WHERE COMPANYNAME='Speedy Express');
+
+
+
+
+
 -- 4.From which supplier companies did we purchase products with
 -- a unit price of more than 20 in the Beverages category?
+     SELECT PRODUCTNAME,CATEGORYNAME,UNITPRICE
+     FROM SUPPLIERS S
+           INNER JOIN PRODUCTS P ON S.SUPPLIERID=P.SUPPLIERID
+           INNER JOIN CATEGORIES C ON P.CATEGORYID=C.CATEGORYID
+     WHERE UNITPRICE>20 AND CategoryName='Beverages' ;
+
 
 -- 5.Select the name of customers who bought only products with price less than 50
 
+    SELECT CONTACTNAME,ProductName,P.UNITPRICE
+    FROM CUSTOMERS C
+        INNER JOIN ORDERS O ON C.CUSTOMERID=O.CUSTOMERID
+        INNER JOIN [ORDER DETAILS] OD ON O.ORDERID=OD.ORDERID
+        INNER JOIN PRODUCTS P ON OD.PRODUCTID=P.PRODUCTID
+    WHERE P.UNITPRICE<50
+    ORDER BY P.UNITPRICE DESC;
+
+
 -- 6.Select the customer name and customer address of all customers
 -- with orders that shipped using United Package
+    SELECT CONTACTNAME,S.COMPANYNAME
+    FROM CUSTOMERS C
+        INNER JOIN ORDERS O ON C.CUSTOMERID=O.CUSTOMERID
+        INNER JOIN SHIPPERS S ON O.SHIPVIA=S.SHIPPERID
+    WHERE S.CompanyName='United Package';
 
+    -- GET ME HOW MANY ORDER EACH CUSTOMER HAS
+        SELECT CONTACTNAME,COUNT(*)
+        FROM CUSTOMERS C
+                 INNER JOIN ORDERS O ON C.CUSTOMERID=O.CUSTOMERID
+                 INNER JOIN SHIPPERS S ON O.SHIPVIA=S.SHIPPERID
+        WHERE S.CompanyName='United Package'
+        GROUP BY CONTACTNAME
+        ORDER BY COUNT(*) DESC;
+
+-- HW
 -- 7.Get me most used shippers company name
-
 -- 8.Get me Customer ContactName who has highest order number
 
+
+-- SELF JOIN
 -- 9.Get me all employees and their managers
 
--- 10.Get me all customers and employees phone numbers
+-- Doing join with table itself
+     -- It is MUST to use TABLE ALIASES
 
+    SELECT WORKERS.FIRSTNAME,WORKERS.LASTNAME,WORKERS.REPORTSTO
+           ,MANAGERS.EMPLOYEEID,MANAGERS.FIRSTNAME,MANAGERS.LASTNAME
+    FROM EMPLOYEES WORKERS
+            INNER JOIN EMPLOYEES MANAGERS
+                ON WORKERS.REPORTSTO=MANAGERS.EMPLOYEEID;
+
+-- GET ME BOSS
+    SELECT WORKERS.FIRSTNAME,WORKERS.LASTNAME,WORKERS.REPORTSTO
+     ,MANAGERS.EMPLOYEEID,MANAGERS.FIRSTNAME,MANAGERS.LASTNAME
+FROM EMPLOYEES WORKERS
+         LEFT JOIN EMPLOYEES MANAGERS
+                    ON WORKERS.REPORTSTO=MANAGERS.EMPLOYEEID;
+
+-- SET OPS
+        -- ALL QUERIES NEED TO RETURN SAME NUMBER OF COLUMN AND COMPATIBLE DATATYPE
+-- 10.Get me all customers and employees phone numbers
+    SELECT FIRSTNAME||' '||LASTNAME AS FULLNAME,HOMEPHONE,'EMPLOYEES' AS TITLE
+    FROM EMPLOYEES
+    UNION
+    SELECT CONTACTNAME,PHONE,'CUSTOMER'
+    FROM CUSTOMERS
+    ORDER BY TITLE DESC;
+
+
+-- HW
 -- 11.Get me all suppliers and customers city,companyName,ContactName

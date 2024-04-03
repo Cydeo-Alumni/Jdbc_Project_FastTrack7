@@ -369,18 +369,15 @@
 -- HW
 -- 7.Get me Customer ContactName who has highest order number
 SELECT ContactName,COUNT(*) FROM Customers C
-                                     INNER JOIN Orders O
-                                                ON C.CustomerID = O.CustomerID
+       INNER JOIN Orders O ON C.CustomerID = O.CustomerID
 GROUP BY ContactName
 ORDER BY 2 DESC
 LIMIT 1;
 
 -- 8.Get me Customer ContactName who did highest payment
 SELECT ContactName,SUM(UnitPrice*Quantity*(1-Discount)) FROM Customers C
-                                                                 INNER JOIN Orders O
-                                                                            ON C.CustomerID = O.CustomerID
-                                                                 INNER JOIN "Order Details" OD
-                                                                            ON OD.OrderID = OD.OrderID
+                INNER JOIN Orders O ON C.CustomerID = O.CustomerID
+                INNER JOIN "Order Details" OD ON OD.OrderID = OD.OrderID
 GROUP BY ContactName
 ORDER BY 2 DESC
 LIMIT 1;

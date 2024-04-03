@@ -27,9 +27,9 @@ public class P02_Categories {
             String categoryName = rs.getString(2);
             String desc = rs.getString(3);
 
-            Categories category=new Categories();
-            category.setCategoryName(categoryName);
-            category.setDesc(desc);
+            Categories category=new Categories(categoryName,desc);
+            //category.setCategoryName(categoryName);
+            //category.setDesc(desc);
 
             allCategories.add(category);
 

@@ -1,11 +1,13 @@
 package com.cydeo.jdbctests.day01;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class P02_Categories {
     public static void main(String[] args) throws SQLException {
         //CONNECTION STRING
-        String dbUrl = System.getenv("DB_URL");
+        String dbUrl = "jdbc:sqlite:/Users/ema/Desktop/northwind.db";
         String dbUsername ="";
         String dbPassword = "";
 
@@ -19,11 +21,21 @@ public class P02_Categories {
         //ResultSet will store data after execution. It stores only data(there is no table info)
         ResultSet rs = statement.executeQuery("select * from Categories");
 
-
+        List<Categories> allCategories = new ArrayList<>();
         while (rs.next()){
 
-            // System.out.println(rs.getString(1)+" - "+rs.getString(2)+" - "+rs.getString(3));
+            String categoryName = rs.getString(2);
+            String desc = rs.getString(3);
 
+            Categories category=new Categories();
+            category.setCategoryName(categoryName);
+            category.setDesc(desc);
+
+            allCategories.add(category);
+
+        }
+        for (Categories eachCategory : allCategories) {
+            System.out.println("eachCategory = " + eachCategory);
         }
 
         //close connection

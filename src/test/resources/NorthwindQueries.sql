@@ -420,3 +420,6 @@ union
 select City, CompanyName, ContactName, 'Suppliers'
 from Suppliers
 order by 4;
+
+
+SELECT * from products;

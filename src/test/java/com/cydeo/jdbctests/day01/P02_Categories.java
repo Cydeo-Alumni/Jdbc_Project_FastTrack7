@@ -2,24 +2,12 @@ package com.cydeo.jdbctests.day01;
 
 import java.sql.*;
 
-public class P01_TestSQLLite {
-
+public class P02_Categories {
     public static void main(String[] args) throws SQLException {
         //CONNECTION STRING
         String dbUrl = System.getenv("DB_URL");
-        // This is your own path
         String dbUsername ="";
         String dbPassword = "";
-
-        /*
-        // Comes from Project env variable
-        System.out.println(System.getenv("Mypassword"));
-        // Comes from Local env variable
-        System.out.println(System.getenv("LIBRARY_USER"));
-        // LIBRARY_USER=librarian@library.com
-        */
-
-
 
         //Create the connection
         //DriverManager class getConnection Method will help to connect database
@@ -34,7 +22,7 @@ public class P01_TestSQLLite {
 
         while (rs.next()){
 
-            System.out.println(rs.getString(1)+" - "+rs.getString(2)+" - "+rs.getString(3));
+            // System.out.println(rs.getString(1)+" - "+rs.getString(2)+" - "+rs.getString(3));
 
         }
 
@@ -44,3 +32,4 @@ public class P01_TestSQLLite {
         conn.close();
 
     }}
+

@@ -367,9 +367,23 @@
         ORDER BY COUNT(*) DESC;
 
 -- HW
--- 7.Get me most used shippers company name
--- 8.Get me Customer ContactName who has highest order number
+-- 7.Get me Customer ContactName who has highest order number
+SELECT ContactName,COUNT(*) FROM Customers C
+                                     INNER JOIN Orders O
+                                                ON C.CustomerID = O.CustomerID
+GROUP BY ContactName
+ORDER BY 2 DESC
+LIMIT 1;
 
+-- 8.Get me Customer ContactName who did highest payment
+SELECT ContactName,SUM(UnitPrice*Quantity*(1-Discount)) FROM Customers C
+                                                                 INNER JOIN Orders O
+                                                                            ON C.CustomerID = O.CustomerID
+                                                                 INNER JOIN "Order Details" OD
+                                                                            ON OD.OrderID = OD.OrderID
+GROUP BY ContactName
+ORDER BY 2 DESC
+LIMIT 1;
 
 -- SELF JOIN
 -- 9.Get me all employees and their managers
@@ -403,3 +417,9 @@ FROM EMPLOYEES WORKERS
 
 -- HW
 -- 11.Get me all suppliers and customers city,companyName,ContactName
+select City, CompanyName, ContactName, 'Customers' as Relationship
+from Customers
+union
+select City, CompanyName, ContactName, 'Suppliers'
+from Suppliers
+order by 4;
